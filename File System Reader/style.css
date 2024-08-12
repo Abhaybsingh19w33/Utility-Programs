@@ -1,0 +1,37 @@
+/* Add your custom styles here */
+
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .file-explorer {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .file-explorer-header {
+    background-color: #0078D7;
+    color: #FFF;
+    padding: 10px;
+  }
+  
+  .file-explorer-content {
+    flex-grow: 1;
+    display: flex;
+    overflow: hidden;
+  }
+  
+  .file-explorer-sidebar {
+    width: 200px;
+    background-color: #F5F5F5;
+    padding: 10px;
+  }
+  
+  .file-explorer-files {
+    flex-grow: 1;
+    background-color: #FFF;
+    padding: 10px;
+  }
+  
