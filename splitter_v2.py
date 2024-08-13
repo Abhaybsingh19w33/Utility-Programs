@@ -96,7 +96,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         else :
             end_time += parts_duration
 
-        logger.debug("Current part : " + str(current_part))
+        logger.debug("Current part : " + str(current_part) + " out of " + str(parts_count))
         logger.debug("Start time : " + str(start_time))
         logger.debug("Temp end time : " + str(end_time))
         # Cut the clip from start_time to end_time
@@ -104,7 +104,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
 
         # Check if the size is within the limit
         temp_clip_path = video_path + fileName + f"temp_part_{current_part}.mp4"
-        temp_clip.write_videofile(temp_clip_path, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac', threads = 2)
+        temp_clip.write_videofile(temp_clip_path, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac', threads = 1)
 
         logger.debug("Temp clip size : " + str(os.path.getsize(temp_clip_path)) + " bytes , in MB " + str(os.path.getsize(temp_clip_path)/(1024*1024)))
 
@@ -112,7 +112,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         if os.path.exists(video_path + fileName + f"part_{current_part}.mp4"):
             os.remove(video_path + fileName + f"part_{current_part}.mp4")
 
-        os.rename(temp_clip_path, (fileName + f"part_{current_part}.mp4"))
+        os.rename(temp_clip_path, (fileName + f"_part_{current_part}.mp4"))
         
         parts_total_size += os.path.getsize(video_path + fileName + f"part_{current_part}.mp4")
 
@@ -135,7 +135,9 @@ def main(path, size_limit_mb):
         split_video_by_size(path, fileName, size_limit_mb)
 
 # Example usage
-video_path = "C:/Users/abhbhagw/Downloads/trim-videos-with-ffmpeg-python-main/test/"
+# video_path = "C:/Users/abhbhagw/Downloads/trim-videos-with-ffmpeg-python-main/"
+video_path = os.getcwd().replace("\\","/")
+video_path = video_path + "/"
 size_limit_mb = 49  # Size limit in MB for each segment
 
 main(video_path, size_limit_mb)

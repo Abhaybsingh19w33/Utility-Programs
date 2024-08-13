@@ -19,4 +19,6 @@ Splitter v0 - it takes video file path (video filename included) also the size l
 
 v1 - almost same but no iteration it splits video in count (size of vides / size limit)
 
-v2 - final it takes only folder path where all the videos are stored, then it splits the all the present video in parts
+old v2 - final it takes only folder path where all the videos are stored, then it splits the all the present video in parts
+
+new v2 - place the script in the same folder as the videos, double click on the script. it will take the video and create parts
