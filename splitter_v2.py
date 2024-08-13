@@ -106,7 +106,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         temp_clip_path = video_path + fileName + f"temp_part_{current_part}.mp4"
         temp_clip.write_videofile(temp_clip_path, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac', threads = 1)
 
-        logger.debug("Temp clip size : " + str(os.path.getsize(temp_clip_path)) + " bytes , in MB " + str(os.path.getsize(temp_clip_path)/(1024*1024)))
+        logger.debug("Temp clip size : " + str(os.path.getsize(temp_clip_path)) + " bytes, in MB " + str(os.path.getsize(temp_clip_path)/(1024*1024)))
 
         # If file already there with same name, delete it
         if os.path.exists(video_path + fileName + f"_part_{current_part}.mp4"):
@@ -114,7 +114,11 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
 
         os.rename(temp_clip_path, (fileName + f"_part_{current_part}.mp4"))
         
-        parts_total_size += os.path.getsize(video_path + fileName + f"_part_{current_part}.mp4")
+        part_size = os.path.getsize(video_path + fileName + f"_part_{current_part}.mp4")
+        if  part_size > size_limit:
+            logger.critical("File {fileName}_part_{current_part}.mp4 size " + str(part_size/(1024*1024)) + " MB exceeds size limit {size_limit_mb} MB")
+
+        parts_total_size += part_size
 
         logger.info(f"Part {current_part} saved from {start_time} to {end_time} seconds.")
         start_time = end_time
@@ -132,6 +136,7 @@ def main(path, size_limit_mb):
     for file in files:
         tempPath = file.split("/")
         fileName = tempPath[-1].split(".mp4")[0]
+        logger.debug("Processing File " + str(files.index(file)) + " out of " + str(len(files)))
         split_video_by_size(path, fileName, size_limit_mb)
 
 # Example usage
