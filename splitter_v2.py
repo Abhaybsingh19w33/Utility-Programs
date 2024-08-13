@@ -56,7 +56,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
 
     print("-------------------------------------------------------------------------------------------------------")
     logger.info("Output Path : " + video_path)
-    logger.info("Size limit : " + str(size_limit))
+    logger.info(f"Size limit : {str(size_limit)} bytes or {size_limit_mb} MB")
     logger.info("Video File Path : " + video_path + fileName + ".mp4")
     print("-------------------------------------------------------------------------------------------------------")
 
@@ -115,8 +115,8 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         os.rename(temp_clip_path, (fileName + f"_part_{current_part}.mp4"))
         
         part_size = os.path.getsize(video_path + fileName + f"_part_{current_part}.mp4")
-        if  part_size > size_limit:
-            logger.critical("File {fileName}_part_{current_part}.mp4 size " + str(part_size/(1024*1024)) + " MB exceeds size limit {size_limit_mb} MB")
+        if  part_size > 49*1024*1024:
+            logger.critical(f"File {fileName}_part_{current_part}.mp4 size {str(part_size/(1024*1024))} MB exceeds size limit 49 MB")
 
         parts_total_size += part_size
 
@@ -124,7 +124,9 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         start_time = end_time
         current_part += 1
 
-    logger.warning("Total size of part file of video " + fileName + ".mp4 - " + str(parts_total_size/(1024*1024)) + " MB")
+    logger.warning(f"Total size of part file of video { fileName }.mp4 - { str(parts_total_size/(1024*1024)) } MB")
+    logger.warning(f"Original Video size { fileName }.mp4 - { str(file_size/(1024*1024)) } MB")
+    logger.warning(f"Size difference { str((file_size - parts_total_size)/(1024*1024)) }")
     
     # Close the video file
     video.close()
@@ -136,13 +138,13 @@ def main(path, size_limit_mb):
     for file in files:
         tempPath = file.split("/")
         fileName = tempPath[-1].split(".mp4")[0]
-        logger.debug("Processing File " + str(files.index(file)) + " out of " + str(len(files)))
+        logger.debug("Processing File " + str(files.index(file) + 1) + " out of " + str(len(files)))
         split_video_by_size(path, fileName, size_limit_mb)
 
 # Example usage
 # video_path = "C:/Users/abhbhagw/Downloads/trim-videos-with-ffmpeg-python-main/"
 video_path = os.getcwd().replace("\\","/")
 video_path = video_path + "/"
-size_limit_mb = 49  # Size limit in MB for each segment
+size_limit_mb = 40  # Size limit in MB for each segment
 
 main(video_path, size_limit_mb)
