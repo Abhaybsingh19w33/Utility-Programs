@@ -109,12 +109,12 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         logger.debug("Temp clip size : " + str(os.path.getsize(temp_clip_path)) + " bytes , in MB " + str(os.path.getsize(temp_clip_path)/(1024*1024)))
 
         # If file already there with same name, delete it
-        if os.path.exists(video_path + fileName + f"part_{current_part}.mp4"):
-            os.remove(video_path + fileName + f"part_{current_part}.mp4")
+        if os.path.exists(video_path + fileName + f"_part_{current_part}.mp4"):
+            os.remove(video_path + fileName + f"_part_{current_part}.mp4")
 
         os.rename(temp_clip_path, (fileName + f"_part_{current_part}.mp4"))
         
-        parts_total_size += os.path.getsize(video_path + fileName + f"part_{current_part}.mp4")
+        parts_total_size += os.path.getsize(video_path + fileName + f"_part_{current_part}.mp4")
 
         logger.info(f"Part {current_part} saved from {start_time} to {end_time} seconds.")
         start_time = end_time
