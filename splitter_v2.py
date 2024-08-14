@@ -58,7 +58,6 @@ def get_new_end_time(file_size,size_limit_mb,video_duration,counter, part_size):
     part_size_mb = part_size/(1024*1024)
     if ( ( part_size_mb - size_limit_mb ) / 10  > 2 ):
         counter += math.floor(( part_size_mb - size_limit_mb ) / 10)
-        counter -= 1
 
     size_limit_mb = size_limit_mb - ( counter * 5)
     logger.info(f"Temp size limit set to {size_limit_mb} MB")
