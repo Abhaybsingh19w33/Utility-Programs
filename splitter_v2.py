@@ -193,7 +193,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
                 if temp_clip_size < 49*1024*1024:
                     logger.warning(
                         f"Created new part video after {counter} try with size { str(temp_clip_size/(1024*1024)) } MB")
-                    temp_clip_size = part_size
+                    part_size = temp_clip_size
                     end_time = temp_end_time
                     break
                 counter += 1
