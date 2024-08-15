@@ -233,6 +233,6 @@ def main(path, size_limit_mb):
 # video_path = "C:/Users/abhbhagw/Downloads/trim-videos-with-ffmpeg-python-main/"
 video_path = os.getcwd().replace("\\", "/")
 video_path = video_path + "/"
-size_limit_mb = 40  # Size limit in MB for each segment
+size_limit_mb = 45  # Size limit in MB for each segment
 
 main(video_path, size_limit_mb)
