@@ -24,3 +24,5 @@ old v2 - final it takes only folder path where all the videos are stored, then i
 new v2 - place the script in the same folder as the videos, double click on the script. it will take the video and create parts, now if the video exceeds the size limit it will delete the new file and try to create the part again with short length to fit the size limit
 
 decrease_video_size - this will reduce the higher resolution video to 1080p resolution effectively reducing the file size
+
+mergeVideos - this will take 2 videos and merge them
