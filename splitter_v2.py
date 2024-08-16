@@ -141,12 +141,109 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         os.rename(temp_clip_path, (fileName + f"_part_{current_part}.mp4"))
 
         part_size = os.path.getsize(clip_path)
-        logger.debug(f"Temp clip size : { str(part_size/(1024*1024)) } MB ")
+        part_size_mb = part_size/(1024*1024)
+        logger.debug(f"Temp clip size : { part_size_mb } MB ")
+
+        pref_counter = 1
+        new_end_time = start_time
+        # looping until the size of the file is in range of 35 - 50
+        while part_size_mb < 35:
+            logger.critical(
+                f"File {fileName}_part_{current_part}.mp4 size {part_size_mb} MB")
+            logger.warning(
+                f"Trying to create another performance file : count { pref_counter }")
+
+            # percentage of how much low it is
+            percentage = ((50 - part_size_mb)*100)/50
+            percentage_inc = math.floor((size_limit_mb * percentage)/100)
+
+            logger.debug(f"Percentage {percentage}, value {percentage_inc}")
+            # increase the size limit by that much
+            if pref_counter == 1:
+                new_size_limit_mb = size_limit_mb + percentage_inc
+            else:
+                new_size_limit_mb += percentage_inc
+
+            logger.info(f"New Size limit     : {new_size_limit_mb} MB")
+
+            # increase the part duration
+            new_part_count = file_size/(new_size_limit_mb*1024*1024)
+            new_part_duration = abs(video_duration/new_part_count)
+
+            # At the end part, make sure it does not exceed the actual video duration
+            if new_end_time + new_part_duration > video_duration:
+                new_end_time = video_duration
+            else:
+                new_end_time += new_part_duration
+
+            logger.debug(f"New part count    : {new_part_count}")
+            logger.debug(f"New part duration : {new_part_duration}")
+            logger.debug(f"Start time        : {start_time}")
+            logger.debug(f"New end time      : {new_end_time}")
+            logger.debug(f"Previous end time : {end_time}")
+
+            # Cut the clip from start_time to end_time
+            temp_clip = video.subclip(start_time, new_end_time)
+
+            new_temp_clip_path = video_path + fileName + \
+                f"temp_part_{current_part}_{pref_counter}.mp4"
+
+            temp_clip.write_videofile(new_temp_clip_path, codec="libx264",
+                                      temp_audiofile='temp-audio.m4a',
+                                      remove_temp=True,
+                                      audio_codec='aac',
+                                      threads=16)
+
+            new_part_size = os.path.getsize(new_temp_clip_path)
+            new_part_size_mb = new_part_size/(1024 * 1024)
+
+            # success cond
+            if new_part_size_mb < 50 and new_part_size_mb > 35 and new_part_size_mb > part_size_mb:
+                # removed the bad clip
+                if os.path.exists(clip_path):
+                    os.remove(clip_path)
+                    logger.critical(
+                        f"File deleted because better clip is created with size {new_part_size_mb} MB")
+
+                os.rename(new_temp_clip_path,
+                          (fileName + f"_part_{current_part}.mp4"))
+
+                part_size = new_part_size
+                part_size_mb = new_part_size_mb
+                end_time = new_end_time
+                break
+
+            elif new_part_size_mb > 50:
+                # removed the new clip
+                if os.path.exists(new_temp_clip_path):
+                    os.remove(new_temp_clip_path)
+                    logger.critical(
+                        f"New file deleted because this is worse than previous with size {new_part_size_mb} MB")
+                break
+            else:
+                # if the size is still less than 35 MB
+                logger.debug(
+                    f"New file is created with size {new_part_size_mb} MB, is still less than 35")
+                # removed the bad clip
+                if os.path.exists(clip_path):
+                    os.remove(clip_path)
+                    logger.critical(
+                        f"File deleted because better clip is created with size {new_part_size_mb} MB")
+
+                os.rename(new_temp_clip_path,
+                          (fileName + f"_part_{current_part}.mp4"))
+
+                part_size = new_part_size
+                part_size_mb = new_part_size_mb
+                end_time = new_end_time
+
+            pref_counter += 1
+            new_end_time = start_time
 
         # Check if the size is within the limit
         if part_size > 49*1024*1024:
             logger.critical(
-                f"File {fileName}_part_{current_part}.mp4 size {str(part_size/(1024*1024))} MB exceeds size limit 49 MB")
+                f"File {fileName}_part_{current_part}.mp4 size {part_size/(1024*1024)} MB exceeds size limit 49 MB")
             os.remove(clip_path)
             logger.critical(f"File deleted because it exceeded the limit")
 
@@ -181,7 +278,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
                 # check new file size
                 temp_clip_size = os.path.getsize(temp_clip_path)
                 logger.debug(
-                    f"Temp clip size : { str(temp_clip_size/(1024*1024)) } MB ")
+                    f"Temp clip size : { temp_clip_size/(1024*1024) } MB ")
 
                 # If file already there with same name, delete it
                 if os.path.exists(clip_path):
@@ -192,7 +289,7 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
 
                 if temp_clip_size < 49*1024*1024:
                     logger.warning(
-                        f"Created new part video after {counter} try with size { str(temp_clip_size/(1024*1024)) } MB")
+                        f"Created new part video after {counter} try with size { temp_clip_size/(1024*1024) } MB")
                     part_size = temp_clip_size
                     end_time = temp_end_time
                     break
