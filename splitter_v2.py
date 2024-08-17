@@ -147,7 +147,8 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
         pref_counter = 1
         new_end_time = start_time
         # looping until the size of the file is in range of 35 - 50
-        while part_size_mb < 35:
+        # also for the last part, if it reached the end don't go into the loop
+        while part_size_mb < 35 and end_time < video_duration:
             logger.critical(
                 f"File {fileName}_part_{current_part}.mp4 size {part_size_mb} MB")
             logger.warning(
@@ -236,6 +237,10 @@ def split_video_by_size(video_path, fileName, size_limit_mb):
                 part_size = new_part_size
                 part_size_mb = new_part_size_mb
                 end_time = new_end_time
+
+            # if video reached the end then come out of loop
+            if end_time == video_duration:
+                break
 
             pref_counter += 1
             new_end_time = start_time
