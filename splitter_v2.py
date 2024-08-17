@@ -325,7 +325,7 @@ def main(path, size_limit_mb):
     logger.debug("Count of Mp4 files in path : " + str(len(files)))
     for file in files:
         # If file does not exist, go to next iteration
-        if not os.path.exists(files):
+        if not os.path.exists(file):
             continue
         tempPath = file.split("/")
         fileName = tempPath[-1].split(".mp4")[0]
