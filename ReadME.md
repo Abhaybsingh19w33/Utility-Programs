@@ -26,3 +26,10 @@ new v2 - place the script in the same folder as the videos, double click on the 
 decrease_video_size - this will reduce the higher resolution video to 1080p resolution effectively reducing the file size
 
 mergeVideos - this will take 2 videos and merge them
+
+## WrittenScript
+
+crackEmailPassword - Brute force email password crack
+
+SAPCourseDownload - script to download SAP Course Material from hservers
+ScriptToDownloadSAPVideos
